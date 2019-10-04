@@ -29,14 +29,14 @@ def create_thumbnail(img_path, size):
 def thumbnail_creator(img_list, folder_path, size):
     for i in range(img_list.__len__()):
         img_path = folder_path / img_list[i]
-
+        
         p = Process(target=create_thumbnail, args=(img_path, size,))
         p.start()
         progressBar(i+1, img_list.__len__())
         p.join()
 
-        create_thumbnail(img_path, size)
-        progressBar(i+1, img_list.__len__())
+        """create_thumbnail(img_path, size)
+        progressBar(i+1, img_list.__len__())"""
 
 def progressBar(value, endvalue, bar_length=20):
     percent = float(value) / endvalue
