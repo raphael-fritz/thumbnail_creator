@@ -7,6 +7,8 @@ Bulk Thumbnail Creator
 
 from pathlib import Path
 from os import listdir
+from os import mkdir
+from os import path
 from sys import stdout
 from PIL import Image
 from multiprocessing import Process
@@ -57,5 +59,7 @@ if __name__ == "__main__":
     y_size = int(input("              y: "))
     size = x_size, y_size
 
+    if not path.exists("./thumbnails"):
+        mkdir("./thumbnails")
     print("\n")
     thumbnail_creator(img_list, folder_path, size)
