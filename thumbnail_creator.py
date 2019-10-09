@@ -6,9 +6,7 @@ Bulk Thumbnail Creator
 """
 
 from pathlib import Path
-from os import listdir
-from os import mkdir
-from os import path
+from os import listdir, mkdir, path
 from sys import stdout
 from PIL import Image
 from multiprocessing import Process
@@ -22,21 +20,25 @@ def create_thumbnail(img_path, size):
     img.thumbnail(size)
 
     # saving
+    if not path.exists("./thumbnails"):
+        mkdir("./thumbnails")
     save_path = Path().absolute() / "thumbnails"/img_path.name
     img.save(save_path)
 
+
 # threading implementation
 def thumbnail_creator(img_list, folder_path, size):
+    p = []
+    progressBar(0, img_list.__len__())
     for i in range(img_list.__len__()):
         img_path = folder_path / img_list[i]
-        
-        p = Process(target=create_thumbnail, args=(img_path, size,))
-        p.start()
-        progressBar(i+1, img_list.__len__())
-        p.join()
+        p.append(Process(target=create_thumbnail, args=(img_path, size,)))
+        p[i].start()
 
-        """create_thumbnail(img_path, size)
-        progressBar(i+1, img_list.__len__())"""
+    for i in range(p.__len__()):
+        p[i].join()
+        progressBar(i+1, img_list.__len__())
+
 
 def progressBar(value, endvalue, bar_length=20):
     percent = float(value) / endvalue
@@ -46,6 +48,7 @@ def progressBar(value, endvalue, bar_length=20):
     stdout.write("\rcreating thumbnails: [{0}] {1}%".format(
         arrow + spaces, int(round(percent * 100))))
     stdout.flush()
+
 
 if __name__ == "__main__":
     print("bulk thumbnail creator\n")
@@ -59,7 +62,5 @@ if __name__ == "__main__":
     y_size = int(input("              y: "))
     size = x_size, y_size
 
-    if not path.exists("./thumbnails"):
-        mkdir("./thumbnails")
     print("\n")
     thumbnail_creator(img_list, folder_path, size)
